@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class ExpenseTracker:
     def __init__(self):
         self.expenses = []
@@ -41,3 +43,31 @@ class ExpenseTracker:
             cat = exp['category']
             category_totals[cat] = category_totals.get(cat, 0) + exp['amount']
         return category_totals
+
+    def get_by_date_range(self, start: str, end: str) -> list:
+        """
+        Возвращает список расходов за период (включая границы).
+
+        :param start: Начальная дата в формате 'YYYY-MM-DD'
+        :param end: Конечная дата в формате 'YYYY-MM-DD'
+        :return: Список расходов в заданном диапазоне
+        """
+        start_date = datetime.strptime(start, '%Y-%m-%d')
+        end_date = datetime.strptime(end, '%Y-%m-%d')
+        result = []
+        for exp in self.expenses:
+            exp_date = datetime.strptime(exp['date'], '%Y-%m-%d')
+            if start_date <= exp_date <= end_date:
+                result.append(exp)
+        return result
+
+    def get_top_categories(self, n=5) -> list:
+        """
+        Возвращает список из n самых затратных категорий (название, сумма), отсортированный по убыванию суммы.
+
+        :param n: Количество возвращаемых категорий
+        :return: Список кортежей (категория, сумма)
+        """
+        category_totals = self.get_by_category()
+        sorted_categories = sorted(category_totals.items(), key=lambda x: x[1], reverse=True)
+        return sorted_categories[:n]
