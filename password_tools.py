@@ -11,7 +11,7 @@ def generate_password(length: int = 12, use_digits: bool = True, use_special: bo
     :param use_special: Включать ли специальные символы (по умолчанию True).
     :return: Сгенерированный пароль.
     """
-    characters = string.ascii_letters  # Буквы верхнего и нижнего регистра
+    characters = string.ascii_letters  
     if use_digits:
         characters += string.digits
     if use_special:
@@ -33,13 +33,18 @@ def check_strength(password: str) -> str:
     has_digit = any(c.isdigit() for c in password)
     has_special = any(c in string.punctuation for c in password)
 
-    if length < 8 or not (has_digit or has_lower or has_upper or has_special):
+    if length < 8:
         return 'Weak'
     
-    if length >= 8 and has_digit and (has_lower or has_upper):
-        return 'Medium'
+    char_types = sum([has_lower, has_upper, has_digit, has_special])
     
-    if length >= 12 and has_lower and has_upper and has_digit and has_special:
+    if char_types == 1:
+        return 'Weak'
+    
+    if length >= 8 and has_lower and has_upper and has_digit and has_special:
         return 'Strong'
     
-    return 'Medium'
+    if length >= 8 and char_types >= 2:
+        return 'Medium'
+    
+    return 'Weak'

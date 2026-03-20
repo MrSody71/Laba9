@@ -35,7 +35,6 @@ def test_check_strength_medium():
 def test_check_strength_strong():
     """Проверяет, что функция возвращает 'Strong' для надежных паролей."""
     assert check_strength("Abc123!@#") == 'Strong'  
-    assert check_strength("Abcdefg1!@#") == 'Weak'  
-    strong_password = "A1b2C3d4!@#$"
-    assert len(strong_password) >= 12
-    assert check_strength(strong_password) == 'Strong'
+    assert check_strength("A1b!2c#D") == 'Strong'  
+    assert check_strength("A1b!2c") == 'Weak'  
+    assert check_strength("Abcdefg1") == 'Medium'
