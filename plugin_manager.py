@@ -22,5 +22,6 @@ class PluginManager:
             try:
                 result = plugin_func(result)
             except Exception as e:
-                print(f"Ошибка при выполнении плагина {plugin_func.__name__} (priority={priority}): {e}")
+                print(f"Error in plugin: {e}")
+                # Продолжаем выполнение с текущим значением result, не изменяя его
         return result
