@@ -3,7 +3,7 @@ import re
 def convert(markdown_text: str) -> str:
     """
     Преобразует Markdown-текст в HTML.
-    Поддерживает заголовки, абзацы, жирный текст, курсив и ссылки.
+    Поддерживает заголовки, абзацы, списки, жирный текст, курсив, ссылки и код.
     """
     lines = markdown_text.splitlines()
     result = []
@@ -29,10 +29,21 @@ def convert(markdown_text: str) -> str:
         
         elif line.strip() == '':
             pass
-        
+            
+        elif line.strip().startswith('- '):
+            list_items = []
+            while i < len(lines) and lines[i].strip().startswith('- '):
+                item_text = lines[i].strip()[2:]  
+                item_text = process_inline_elements(item_text)
+                list_items.append(f'<li>{item_text}</li>')
+                i += 1
+            
+            i -= 1
+            result.append(f'<ul>{"".join(list_items)}</ul>')
+            
         else:
             paragraph = []
-            while i < len(lines) and lines[i].strip() != '' and not lines[i].startswith('#'):
+            while i < len(lines) and lines[i].strip() != '' and not lines[i].startswith('#') and not lines[i].strip().startswith('- '):
                 paragraph.append(lines[i].strip())
                 i += 1
             
@@ -54,5 +65,7 @@ def process_inline_elements(text: str) -> str:
     text = re.sub(r'(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)', r'<em>\1</em>', text)
     
     text = re.sub(r'\[(.*?)\]\((.*?)\)', r'<a href="\2">\1</a>', text)
+    
+    text = re.sub(r'`(.*?)`', r'<code>\1</code>', text)
     
     return text
