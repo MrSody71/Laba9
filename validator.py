@@ -46,4 +46,14 @@ class SchemaValidator:
         if expected_python_type is None:
             return True  
 
-        return isinstance(value, expected_python_type)
+        if not isinstance(value, expected_python_type):
+            return False
+            
+        if expected_type == "object" and "properties" in field_schema:
+            return self._validate_schema(value, field_schema)
+            
+        if expected_type == "array" and "items" in field_schema:
+            items_schema = field_schema["items"]
+            return all(self._validate_field(item, items_schema) for item in value)
+            
+        return True
